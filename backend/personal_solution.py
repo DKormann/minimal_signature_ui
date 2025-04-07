@@ -57,12 +57,21 @@ def detect_lines(img):
     Adjust the thresholds, minLineLength, and maxLineGap as needed.
     """
     lines = cv2.HoughLinesP(img, 1, np.pi / 180, threshold=100,
-                            minLineLength=50, maxLineGap=10)
+                            minLineLength=250, maxLineGap=10)
     if lines is None:
         return []
-    return lines[:, 0, :]  # each line: [x1, y1, x2, y2]
+
+
+    result = lines[:, 0, :]  # each line: [x1, y1, x2, y2]
+    lenght = [(((x1 - x2)**2 + (y1 - y2)**2)**0.5, (x1,y1, x2,y2))for x1,y1,x2,y2 in result]
+    sortedlenght = list(reversed(sorted(lenght)))
+    biggest_lines = sortedlenght[:10]
+    print (biggest_lines)
+    return [lines_coordinates for lenght, lines_coordinates in biggest_lines]
 
 scan_lines = detect_lines(scan_preprocessed)
+# print(scan_lines)
+#%%
 template_lines = detect_lines(template_preprocessed)
 # %%
 def visualize_lines(lines, img):

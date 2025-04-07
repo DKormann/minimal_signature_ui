@@ -6,7 +6,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 
 # %%
-scan_fp = "resources/KW_37_bsf-n135_p1.png"
+scan_fp = "page_2.png" #"resources/KW_37_bsf-n135_p1.png"
 template_fp = "resources/Anwesenheitsliste_lt.png"
 
 # scan = np.array(Image.open(scan_fp))
@@ -115,3 +115,5 @@ display(Image.open(template_fp))
 rotated_signatures_fp = "resources/rotated/rotated_signature_scan.png"
 projected_image.save(rotated_signatures_fp)
 
+
+# %%
