@@ -32,6 +32,8 @@ def detect_lines(img):
     diffs = lines[:,:2] - lines[:,2:]
     length = (diffs**2).sum(axis=1)**0.5
 
+    
+
     biggest_lines = list(sorted(zip(length, lines.tolist()))) [-20:]
 
     return [line for _, line in biggest_lines]
