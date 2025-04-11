@@ -8,6 +8,10 @@ import matplotlib.pyplot as plt
 # %%
 rotated_scan_fp = Path('resources/rotated/rotated_signature_scan.png')
 # markers to identify the corners of the rotated scan
+
+bottom_left_fp = Path('resources/rotated/botleftcrop.png')
+top_right_fp = Path('resources/rotated/toprightcrop.png')
+
 bottom_left_fp = Path('resources/rotated/bottom_left.png')
 top_right_fp = Path('resources/rotated/top_right.png')
 
@@ -93,7 +97,10 @@ def rescale_image(image, template):
     return cv2.resize(image, (w, h))
 
 rescaled_cropped_scan = rescale_image(cropped_scan, template)
-display(Image.fromarray(rescaled_cropped_scan))
+img = Image.fromarray(rescaled_cropped_scan)
+display(img)
+
+img.save('resources/rescaled_cropped_scan.png')
 # %%
 def plot_images(images):
     fig, ax = plt.subplots(1, len(images), figsize=(10, 5))
