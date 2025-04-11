@@ -2,5 +2,7 @@
 
 resources/*
 
+
+.DS_Store
 **/*.json
 **/__pycache__/*
