@@ -27,7 +27,7 @@ scan_preprocessed = preprocess(scan)
 display(Image.fromarray(scan_preprocessed))
 
 
-lines = cv2.HoughLinesP(scan_preprocessed, 1, np.pi / 180, threshold=100, minLineLength=250, maxLineGap=10)
+lines = cv2.HoughLinesP(scan_preprocessed, 1, np.pi / 180, threshold=100, minLineLength=100, maxLineGap=10)
 
 
 #%%
@@ -42,9 +42,7 @@ def guess_rotation(lines):
     length = (diffs**2).sum(axis=1)**0.5
 
     angles = np.arctan2(diffs[:,1], diffs[:,0]) * 180 / np.pi
-    modangles = (angles + 360 + 45) % 90
-
-
+    modangles = (angles + 360 + 45) % 9
     
     weighted_mean = np.average(modangles, weights=length) - 45
 
@@ -81,19 +79,39 @@ def specs(arr):
     arrh = arr.sum(1) / arr.shape[1]
     return arrv, arrh
 
-
-
 rotated = scan.rotate(rotation, fillcolor=(255, 255, 255))
-
 vv, hh = specs(np.array(rotated))
 
-plt.plot(vv)
-plt.plot(hh)
+
+#%%
+
+def rot_lines(lines, angle):
+    hlines = lines.reshape(-1, 2, 2)  # [N, 2, 2]    
+    angle = - angle / 180 * np.pi
+    si = np.sin(angle)
+    co = np.cos(angle)
+    M = np.array([ [co, -si], [si, co]])
+    return (hlines @ M).transpose(0, 2, 1)
+
+rotlines = rot_lines(horlines, -rotation)
+for l in rotlines: plt.plot(*l, c='k')
+
+rotlines = rot_lines(vertlines, -rotation)
+for l in rotlines: plt.plot(*l, c='k')
+
+plt.axis('equal')
+
+#%%
+
+
+display(rotated)
+
 #%%
 
 tv, th = specs(template)
 
-plt.plot(th)
+plt.plot(hh)
+plt.show()
 plt.plot(tv)
 
 
@@ -105,8 +123,6 @@ plt.plot(th)
 
 
 
-rotated_image = scan.rotate(rotation)
-display(rotated_image)
 
 #%%
 
