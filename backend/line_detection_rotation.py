@@ -36,7 +36,7 @@ def guess_rotation(lines):
     diffs = lines[:,:2] - lines[:,2:]
     length = (diffs**2).sum(axis=1)**0.5
 
-    angles = np.atan2(diffs[:,1], diffs[:,0]) * 180 / np.pi
+    angles = np.arctan2(diffs[:,1], diffs[:,0]) * 180 / np.pi
     angles = (angles + 360 + 45) % 90
 
     weighted_mean = np.average(angles, weights=length) - 45
@@ -66,17 +66,19 @@ print(f"amt of scan lines: {len(scan_lines)}")
 #%%
 
 
-# def apply_rotation(img, angle):
+def apply_rotation(img, angle):
 
-#     M = cv2.getRotationMatrix2D(center, angle, 1.0)
-#     rotated = cv2.warpAffine(img, M, (w, h), flags=cv2.INTER_CUBIC)
-#     return rotated
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated = cv2.warpAffine(img, M, (w, h), flags=cv2.INTER_CUBIC)
+    return rotated
 
 
-scan.rotate(rotation)
+rotated_image = scan.rotate(rotation)
+display(rotated_image)
 
 
 # # %%
 
 
 np.tan(1/15)
+# %%
