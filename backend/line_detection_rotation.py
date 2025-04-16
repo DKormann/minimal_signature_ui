@@ -15,9 +15,6 @@ display(scan)
 template = np.array(Image.open(Path("./resources/Anwesenheitsliste_lt.png")))[:,:,:3]
 
 
-#%%
-
-'
 
 # %%
 
@@ -45,8 +42,10 @@ def guess_rotation(lines):
     length = (diffs**2).sum(axis=1)**0.5
 
     angles = np.arctan2(diffs[:,1], diffs[:,0]) * 180 / np.pi
-    angles = (angles + 360 + 45) % 90
+    modangles = (angles + 360 + 45) % 90
 
+
+    
     weighted_mean = np.average(modangles, weights=length) - 45
 
     corrected_angles = (angles - weighted_mean) % 180
@@ -71,8 +70,6 @@ plotline(horlines, (0, 255, 0))
 plotline(vertlines, (255, 0, 0))
 
 display(Image.fromarray(img_with_lines))
-
-
 
 
 #%%
@@ -106,19 +103,14 @@ plt.plot(vv)
 plt.show()
 plt.plot(th)
 
-def apply_rotation(img, angle):
-
-    M = cv2.getRotationMatrix2D(center, angle, 1.0)
-    rotated = cv2.warpAffine(img, M, (w, h), flags=cv2.INTER_CUBIC)
-    return rotated
 
 
 rotated_image = scan.rotate(rotation)
 display(rotated_image)
 
-import torch
+#%%
 
-hh = torch.tensor(arrh).float()
+import torch
 hh = hh - hh.mean()
 
 plt.plot(hh)
