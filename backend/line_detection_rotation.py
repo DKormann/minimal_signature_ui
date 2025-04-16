@@ -8,15 +8,23 @@ import matplotlib.pyplot as plt
 # %%
 scan_fp = Path("resources/KW_37_bsf-n135_p1.png")
 scan = Image.open(scan_fp)
-
 display(scan)
+
+
+
+template = np.array(Image.open(Path("./resources/Anwesenheitsliste_lt.png")))[:,:,:3]
+
+
+#%%
+
+'
 
 # %%
 
 def preprocess(image):
     image = np.array(image.convert("RGB"))
-    # image[cv2.cvtColor(image, cv2.COLOR_BGR2HSV)[:, :, 1] > 25] = [255, 255, 255]
-    return cv2.Canny(cv2.medianBlur(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), 5), 50, 150, apertureSize=3)
+    blurr = cv2.medianBlur(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), 5)
+    return cv2.Canny(blurr, 50, 150, apertureSize=3)
 
 scan_preprocessed = preprocess(scan)
 display(Image.fromarray(scan_preprocessed))
@@ -39,32 +47,64 @@ def guess_rotation(lines):
     angles = np.arctan2(diffs[:,1], diffs[:,0]) * 180 / np.pi
     angles = (angles + 360 + 45) % 90
 
-    weighted_mean = np.average(angles, weights=length) - 45
+    weighted_mean = np.average(modangles, weights=length) - 45
 
-    # plt.hist(angles-45, bins=100)
-    # plt.axvline(weighted_mean, color='r', linestyle='dashed', linewidth=1)
+    corrected_angles = (angles - weighted_mean) % 180
+    is_vertical = np.logical_or(corrected_angles < 5, corrected_angles > (180 - 5))
+    is_horizontal = np.abs(corrected_angles - 90) < 5
 
-    biggest_lines = list(sorted(zip(length, lines.tolist()))) [-40:]
-    return [line for _, line in biggest_lines], weighted_mean
 
-scan_lines, rotation = guess_rotation(lines)
+    return lines[is_vertical], lines[is_horizontal], weighted_mean
+
+vertlines, horlines, rotation = guess_rotation(lines)
+
+#%%
+
+img = np.array(scan_preprocessed)
+if len(img.shape) == 2 or img.shape[2] == 1: img_with_lines = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+else: img_with_lines = img.copy()
+
+def plotline(lines, col):
+    for l in lines:  cv2.line(img_with_lines, (l[0], l[1]), (l[2], l[3]), col, 2)
+
+plotline(horlines, (0, 255, 0))
+plotline(vertlines, (255, 0, 0))
+
+display(Image.fromarray(img_with_lines))
+
+
 
 
 #%%
 
-def visualize_lines(lines, img):
-    if len(img.shape) == 2 or img.shape[2] == 1: img_with_lines = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-    else: img_with_lines = img.copy()
+def specs(arr):
+    print(arr.shape)
+    arr = 1-(arr / 255).prod(axis=-1)
+    arrv = arr.sum(0)/ arr.shape[0]
+    arrh = arr.sum(1) / arr.shape[1]
+    return arrv, arrh
 
-    for x1, y1, x2, y2 in lines: cv2.line(img_with_lines, (x1, y1), (x2, y2), (0, 0, 255), 2)
-    display(Image.fromarray(img_with_lines))
 
-visualize_lines(scan_lines, np.array(scan_preprocessed))
 
-print(f"amt of scan lines: {len(scan_lines)}")
+rotated = scan.rotate(rotation, fillcolor=(255, 255, 255))
+
+vv, hh = specs(np.array(rotated))
+
+plt.plot(vv)
+plt.plot(hh)
+#%%
+
+tv, th = specs(template)
+
+plt.plot(th)
+plt.plot(tv)
+
 
 #%%
 
+plt.plot(vv)
+plt.show()
+plt.plot(th)
 
 def apply_rotation(img, angle):
 
@@ -76,9 +116,12 @@ def apply_rotation(img, angle):
 rotated_image = scan.rotate(rotation)
 display(rotated_image)
 
+import torch
 
-# # %%
+hh = torch.tensor(arrh).float()
+hh = hh - hh.mean()
 
+plt.plot(hh)
 
 np.tan(1/15)
 # %%
