@@ -6,13 +6,13 @@ from IPython.display import display
 import cv2
 import matplotlib.pyplot as plt
 # %%
-scan_fp = Path("resources/KW_37_bsf-n135_p1.png")
+scan_fp = Path("../resources/KW_37_bsf-n135_p1.png")
 scan = Image.open(scan_fp)
 display(scan)
 
 
 
-template = np.array(Image.open(Path("./resources/Anwesenheitsliste_lt.png")))[:,:,:3]
+template = np.array(Image.open(Path("../resources/Anwesenheitsliste_lt.png")))[:,:,:3]
 
 
 
@@ -42,7 +42,7 @@ def guess_rotation(lines):
     length = (diffs**2).sum(axis=1)**0.5
 
     angles = np.arctan2(diffs[:,1], diffs[:,0]) * 180 / np.pi
-    modangles = (angles + 360 + 45) % 9
+    modangles = (angles + 360 + 45) % 90
     
     weighted_mean = np.average(modangles, weights=length) - 45
 
@@ -73,15 +73,16 @@ display(Image.fromarray(img_with_lines))
 #%%
 
 def specs(arr):
-    print(arr.shape)
-    arr = 1-(arr / 255).prod(axis=-1)
+    arr = 1-(arr / 255).prod(axis=-1) # color filter
     arrv = arr.sum(0)/ arr.shape[0]
     arrh = arr.sum(1) / arr.shape[1]
     return arrv, arrh
 
 rotated = scan.rotate(rotation, fillcolor=(255, 255, 255))
 vv, hh = specs(np.array(rotated))
+#%%
 
+rotated
 
 #%%
 
@@ -120,6 +121,27 @@ plt.plot(tv)
 plt.plot(vv)
 plt.show()
 plt.plot(th)
+
+
+#%%
+
+
+
+
+
+
+plt.plot(hh[130:170])
+
+#%%
+
+
+
+
+
+peaks= ((hh[1:-1] > hh[:-2] )* (hh[1:-1] > hh[2:]) * hh [1:-1])
+
+plt.plot(peaks[100:200])
+
 
 
 
