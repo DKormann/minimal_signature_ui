@@ -20,7 +20,7 @@ display (template)
 def preprocess(image):
   image = np.array(image.convert("RGB"))
   blurr = cv2.medianBlur(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), 5)
-  return cv2.Canny(blurr, 50, 150, apertureSize=5)
+  return cv2.Canny(blurr, 50, 150, apertureSize=3)
 
 scan_preprocessed = preprocess(scan)
 temp_preprocessed = preprocess(template)
@@ -72,12 +72,6 @@ def plotline(lines, col):
 plotline(horlines, (0, 255, 0))
 plotline(vertlines, (255, 0, 0))
 
-
-
-#%%
-
-horlines
-
 #%%
 
 
@@ -104,17 +98,26 @@ plt.axis('equal')
 
 
 for l in np.concat([template_data[0], template_data[1]], axis=0): plt.plot(*l, c='k')
-plt.axis('equal')
+plt.show(
+  xlim=(0, 1000)
+)
+
+# plt.axis('equal')
+
 #%%
 
 
 def line_spec(lines):
-  maxT = (lines[:,1].max() + 1).astype(int)
-  res = np.zeros(maxT)
+
+
+  res = np.zeros((lines[:,1].max() + 1).astype(int))
+
   lengths = lines[:,0]
+
   lengths = np.abs(lengths[:, 0] - lengths[:, 1])
 
   Ts = lines[:, 1, 0].astype(int)
+  print(Ts.shape)
   for t, l in zip(Ts, lengths): res[t] += l
   return res
 
@@ -125,12 +128,21 @@ hspec = line_spec(rothlines.swapaxes(2,1))
 template_vspec = line_spec(template_data[0])
 template_hspec = line_spec(template_data[1].swapaxes(1,2))
 
-
+#%%
 
 # plt.plot(vspec)
-plt.plot(template_hspec)
+# plt.plot(template_hspec[1000:1500][300:320])
+
+template_hspec[1000:1500][300:320].sum()
+
+#%%
+plt.plot(template_hspec[:100])
+
 # %%
 
+plt.plot(template_hspec)
+
+#%%
 
 import torch
 
