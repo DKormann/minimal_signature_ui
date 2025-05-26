@@ -97,71 +97,78 @@ plt.axis('equal')
 #%%
 
 
-for l in np.concat([template_data[0], template_data[1]], axis=0): plt.plot(*l, c='k')
-plt.show(
-  xlim=(0, 1000)
-)
 
-# plt.axis('equal')
+for l in template_data[0]: plt.plot(*l, c='k', )
+for l in template_data[1]: plt.plot(*l, c='k', )
+
+
 
 #%%
 
 
 def line_spec(lines):
 
-
   res = np.zeros((lines[:,1].max() + 1).astype(int))
 
-  lengths = lines[:,0]
-
-  lengths = np.abs(lengths[:, 0] - lengths[:, 1])
+  lengths = np.abs(lines[:,0, 1] - lines[:,1, 1])
 
   Ts = lines[:, 1, 0].astype(int)
   print(Ts.shape)
-  for t, l in zip(Ts, lengths): res[t] += l
+  for t, l, line in zip(Ts, lengths, lines): res[t] += l
   return res
 
 
 vspec = line_spec(rotvlines)
-hspec = line_spec(rothlines.swapaxes(2,1))
+hspec = line_spec(rothlines.swapaxes(1,2))
 
 template_vspec = line_spec(template_data[0])
 template_hspec = line_spec(template_data[1].swapaxes(1,2))
 
-#%%
 
-# plt.plot(vspec)
-# plt.plot(template_hspec[1000:1500][300:320])
-
-template_hspec[1000:1500][300:320].sum()
-
-#%%
-plt.plot(template_hspec[:100])
-
-# %%
-
-plt.plot(template_hspec)
-
-#%%
-
-import torch
-
-sspec = torch.tensor (vspec)
-tspec = torch.tensor (template_hspec)
-
-
-kernel = torch.tensor([1,2,3,2,1]).double().reshape(1,1,-1) / 3.0
-
-def smooth(x):
-  res= torch.nn.functional.conv1d(x.reshape(1,1,-1), kernel).flatten()
-  res /= res.sum()
-  return res
-
-# sspec = smooth(sspec)
-# tspec = smooth(tspec)
-
-
-# plt.plot(sspec)
+plt.plot(vspec)
 plt.show()
-plt.plot(tspec)
+plt.plot(hspec)
+plt.show()
+plt.plot(template_hspec)
+plt.show()
+plt.plot(template_vspec)
 
+#%%
+
+
+X = vspec
+T = template_hspec
+
+#%%
+
+plt.plot(X)
+plt.plot(T)
+
+#%%
+
+def smoothline(s, n=5):
+  kernel = np.arange(n)
+  kernel = kernel * kernel[::-1]
+  kernel = kernel / kernel.sum()
+  return np.convolve(s, kernel, mode='same')
+
+
+SX = smoothline(X, 10)
+ST = smoothline(T, 10)
+
+
+
+def rescale_signal(signal, new_length):
+    x_old = np.linspace(0, 1, len(signal))
+    x_new = np.linspace(0, 1, new_length)
+    return np.interp(x_new, x_old, signal)
+
+#%%
+
+plt.plot(rescale_signal(SX[55:], 2850))
+plt.plot(ST)
+
+#%%
+
+plt.plot(rescale_signal(SX[::-1][100:], 2800))
+plt.plot(ST)
