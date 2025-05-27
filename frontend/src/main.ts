@@ -2,7 +2,6 @@
 
 
 
-document.body.innerHTML = "<h1>minimal signature UI</h1>"
 
 async function load() {
 
@@ -16,11 +15,8 @@ async function load() {
     })
   });
 
-  console.log(doclist);
-  
 
-  let doc_picker = document.createElement("select");
-  doc_picker.id = "doc_picker";
+  let doc_picker = document.querySelector("#fileInput") as HTMLSelectElement
 
   doclist.forEach((doc) => {
     let option = document.createElement("option");
@@ -33,11 +29,8 @@ async function load() {
   doc_picker.addEventListener("change", (event) => {
     let selectedDoc = (event.target as HTMLSelectElement).value;
     console.log("Selected document:", selectedDoc);
-  });
-
+  });  
   
-  
-  document.body.appendChild(doc_picker);
 
 }
 

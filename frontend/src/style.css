@@ -1,4 +1,4 @@
-body{
+/* body{
   background-color: #333;
   color: #fff;
 
@@ -25,4 +25,107 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
+}
+ */
+
+
+body {
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background-color: whitesmoke;
+}
+
+.uploader {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  text-align: center;
+  width: 90%;
+  max-width: 800px;
+  position: relative;
+}
+
+label[for="fileInput"], #fileInput {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background-color: blue;
+  color: white;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.preview {
+  margin-top: 1rem;
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  position: relative;
+}
+
+.preview.iframe {
+  height: 600px;
+}
+
+.focus-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.6);
+  transition: opacity 0.3s;
+  opacity: 0;
+  --h-focus-top: 35%;
+  --h-focus-bottom: 45%;
+  --v-focus-left: 35%;
+  --v-focus-right: 45%;
+}
+
+.uploader.focused-horizontal .focus-overlay {
+  opacity: 1;
+  clip-path: polygon(
+    0% 0%,    100% 0%,
+    100% var(--h-focus-top), 0% var(--h-focus-top),
+    0% var(--h-focus-bottom),   100% var(--h-focus-bottom),
+    100% 100%,0% 100%
+  );
+}
+
+.uploader.focused-vertical .focus-overlay {
+  opacity: 1;
+  clip-path: polygon(
+    0% 0%, var(--v-focus-left) 0%,
+    var(--v-focus-left) 100%, var(--v-focus-right) 100%,
+    var(--v-focus-right) 0%, 100% 0%,
+    100% 100%, 0% 100%
+  );
+}
+
+.focus-controls {
+    margin-top: 1rem;
+}
+
+.focus-toggle-btn {
+  margin-left: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background: red;
+  color: white;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+.focus-toggle-btn:first-child {
+    margin-left: 0;
 }
