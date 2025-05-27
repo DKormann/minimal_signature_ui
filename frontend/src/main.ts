@@ -2,11 +2,10 @@
 
 
 
-
 document.body.innerHTML = "<h1>minimal signature  some tsutttsdkjsdhfkdsjh</h1>"
 
 
-fetch("/api/message").then((response) => {
+fetch("http://localhost:5000/api/list_documents").then((response) => {
   if (response.ok) {
     response.text().then((text) => {
       document.body.innerHTML += `<p>${text}</p>`;
