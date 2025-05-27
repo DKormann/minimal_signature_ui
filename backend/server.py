@@ -1,6 +1,6 @@
 
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
 
@@ -18,6 +18,14 @@ def message():
 @app.route('/api/list_documents', methods=['GET'])
 def list_documents():
   return jsonify(os.listdir('./documents'))
+
+@app.route('/api/get_document/<string:name>', methods=['GET'])
+def get_document(name):
+  try:
+    return send_from_directory('./documents', name)
+  except FileNotFoundError:
+    return jsonify({'error': 'Document not found'}), 404
+  
 
 @app.route("/", methods = ["GET"])
 def index(): return app.send_static_file('index.html')
