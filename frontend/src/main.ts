@@ -6,6 +6,12 @@ const toggleVerticalFocusButton = document.getElementById("toggleVerticalFocusBu
 let overlay : HTMLDivElement | null = null; // Initialize overlay as null
 
 
+const horizontalBandSize = 4.2
+const verticalBandSize = 15.2
+
+const horizontalFocusTop = 23;
+const verticalFocusLeft = 3;
+
 let focusMode = 'none'; 
 
 
@@ -58,7 +64,7 @@ async function load() {
           el = document.createElement("iframe");
           el.src = url;
           el.className = "preview iframe";
-          // el.type = "application/pdf";
+
         }else if (selectedDoc.endsWith(".jpg") || selectedDoc.endsWith(".png")) {
           el = document.createElement("img");
           el.src = url;
@@ -73,14 +79,20 @@ async function load() {
         wrapper.appendChild(el);
         overlay = document.createElement("div");
         overlay.className = "focus-overlay";
+
+        overlay.style.setProperty('--h-focus-top', `${horizontalFocusTop}%`);
+        overlay.style.setProperty('--h-focus-bottom', `${horizontalFocusTop + horizontalBandSize}%`);
+        overlay.style.setProperty('--v-focus-left', `${verticalFocusLeft}%`);
+        overlay.style.setProperty('--v-focus-right', `${verticalFocusLeft + verticalBandSize}%`); // Assuming focus band size is 10%
+
+
         wrapper.appendChild(overlay);
         previewContainer.appendChild(wrapper);
 
         const uploader = document.getElementById("uploader") as HTMLDivElement;
         uploader.classList.remove("focused-horizontal", "focused-vertical");
         focusMode = 'none';
-        const initialHorizontalFocusTop = 35;
-        const initialVerticalFocusLeft = 35;
+
         })
 
   });
@@ -107,36 +119,37 @@ async function load() {
     if (!overlay) return;
     
     let moved = false;
-    const focusStep = 2;
-
+    
     if (uploader.classList.contains("focused-horizontal")) {
+
       console.log("Horizontal focus mode active");
       
       if (event.key === 'ArrowUp') {
         const currentTop = parseFloat(getComputedStyle(overlay).getPropertyValue('--h-focus-top')) || 35;
-        const newTop = Math.max(0, currentTop - focusStep);
+        const newTop = Math.max(0, currentTop - horizontalBandSize);
         overlay.style.setProperty('--h-focus-top', `${newTop}%`);
-        overlay.style.setProperty('--h-focus-bottom', `${newTop + 10}%`); // Assuming focus band size is 10%
+        overlay.style.setProperty('--h-focus-bottom', `${newTop + horizontalBandSize}%`);
         moved = true;
       } else if (event.key === 'ArrowDown') {
         const currentTop = parseFloat(getComputedStyle(overlay).getPropertyValue('--h-focus-top')) || 35;
-        const newTop = Math.min(100 - 10, currentTop + focusStep); // Assuming focus band size is 10%
+        const newTop = Math.min(100 - 10, currentTop + horizontalBandSize);
         overlay.style.setProperty('--h-focus-top', `${newTop}%`);
-        overlay.style.setProperty('--h-focus-bottom', `${newTop + 10}%`);
+        overlay.style.setProperty('--h-focus-bottom', `${newTop + horizontalBandSize}%`);
         moved = true;
       }
     } else if (uploader.classList.contains("focused-vertical")) {
+
       if (event.key === 'ArrowLeft') {
         const currentLeft = parseFloat(getComputedStyle(overlay).getPropertyValue('--v-focus-left')) || 35;
-        const newLeft = Math.max(0, currentLeft - focusStep);
+        const newLeft = Math.max(0, currentLeft - verticalBandSize);
         overlay.style.setProperty('--v-focus-left', `${newLeft}%`);
-        overlay.style.setProperty('--v-focus-right', `${newLeft + 10}%`); // Assuming focus band size is 10%
+        overlay.style.setProperty('--v-focus-right', `${newLeft + verticalBandSize}%`); // Assuming focus band size is 10%
         moved = true;
       } else if (event.key === 'ArrowRight') {
         const currentLeft = parseFloat(getComputedStyle(overlay).getPropertyValue('--v-focus-left')) || 35;
-        const newLeft = Math.min(100 - 10, currentLeft + focusStep); // Assuming focus band size is 10%
+        const newLeft = Math.min(100 - 10, currentLeft + verticalBandSize); // Assuming focus band size is 10%
         overlay.style.setProperty('--v-focus-left', `${newLeft}%`);
-        overlay.style.setProperty('--v-focus-right', `${newLeft + 10}%`);
+        overlay.style.setProperty('--v-focus-right', `${newLeft + verticalBandSize}%`);
         moved = true;
       }
     }
