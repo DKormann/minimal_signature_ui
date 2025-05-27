@@ -121,6 +121,25 @@
 
 const previewContainer = document.getElementById("previewContainer") as HTMLDivElement;
 
+const toggleHorizontalFocusButton = document.getElementById("toggleHorizontalFocusButton") as HTMLButtonElement;
+const toggleVerticalFocusButton = document.getElementById("toggleVerticalFocusButton") as HTMLButtonElement;
+
+let overlay : HTMLDivElement | null = null; // Initialize overlay as null
+
+
+let focusMode = 'none'; 
+const initialHorizontalFocusTop = 35; 
+const initialVerticalFocusLeft = 35;  
+const focusBandSize = 10;
+const focusStep = 1;
+
+let currentHorizontalFocusTop = initialHorizontalFocusTop;
+let currentVerticalFocusLeft = initialVerticalFocusLeft;
+
+
+
+
+
 async function load() {
 
   let doclist :string[] = []
@@ -153,10 +172,6 @@ async function load() {
   doc_picker.addEventListener("change", (event) => {
 
     let selectedDoc = (event.target as HTMLSelectElement).value;
-    // console.log("Clicked document:", selectedDoc);
-    // if (selectedDoc) {
-    //   window.location.href = `http://localhost:5000/api/get_document/${selectedDoc}`;
-    // }
 
     fetch(`http://localhost:5000/api/get_document/${selectedDoc}`)
       .then(response => {
@@ -187,24 +202,96 @@ async function load() {
         const wrapper = document.createElement("div");
         wrapper.style.position = "relative";
         wrapper.appendChild(el);
-        const overlay = document.createElement("div");
+        overlay = document.createElement("div");
         overlay.className = "focus-overlay";
         wrapper.appendChild(overlay);
         previewContainer.appendChild(wrapper);
         // Reset focus state
 
-        // const uploader = document.getElementById("uploader") as HTMLDivElement;
-        // uploader.classList.remove("focused-horizontal", "focused-vertical");
-        // let focusMode = 'none';
-        // const initialHorizontalFocusTop = 35;
-        // const initialVerticalFocusLeft = 35;
+        const uploader = document.getElementById("uploader") as HTMLDivElement;
+        uploader.classList.remove("focused-horizontal", "focused-vertical");
+        focusMode = 'none';
+        const initialHorizontalFocusTop = 35;
+        const initialVerticalFocusLeft = 35;
+        const focusBandSize = 10;
+        let currentHorizontalFocusTop = initialHorizontalFocusTop;
+        let currentVerticalFocusLeft = initialVerticalFocusLeft;
+        const updateOverlayCssVariables = () => {
+          if (overlay) {
+            overlay.style.setProperty('--h-focus-top', `${currentHorizontalFocusTop}%`);
+            overlay.style.setProperty('--h-focus-bottom', `${currentHorizontalFocusTop + focusBandSize}%`);
+            overlay.style.setProperty('--v-focus-left', `${currentVerticalFocusLeft}%`);
+            overlay.style.setProperty('--v-focus-right', `${currentVerticalFocusLeft + focusBandSize}%`);
+          }
+        };
       })
 
-
-
-          
-
   });
+
+  const uploader = document.getElementById("uploader") as HTMLDivElement;
+  
+
+  toggleHorizontalFocusButton.addEventListener("click", () => {
+    uploader.classList.toggle("focused-horizontal");
+    uploader.classList.remove("focused-vertical");
+    
+  });
+
+  toggleVerticalFocusButton.addEventListener("click", () => {
+    uploader.classList.toggle("focused-vertical");
+    uploader.classList.remove("focused-horizontal");
+  });
+
+  document.addEventListener('keydown', (event) => {
+    console.log("Key pressed:", event.key);
+    console.log("Overlay class list:", document.querySelector(".focus-overlay")?.classList);
+    
+    
+    if (!overlay) return;
+    
+    let moved = false;
+    const focusStep = 2;
+
+    if (uploader.classList.contains("focused-horizontal")) {
+      console.log("Horizontal focus mode active");
+      
+      if (event.key === 'ArrowUp') {
+        const currentTop = parseFloat(getComputedStyle(overlay).getPropertyValue('--h-focus-top')) || 35;
+        const newTop = Math.max(0, currentTop - focusStep);
+        overlay.style.setProperty('--h-focus-top', `${newTop}%`);
+        overlay.style.setProperty('--h-focus-bottom', `${newTop + 10}%`); // Assuming focus band size is 10%
+        moved = true;
+      } else if (event.key === 'ArrowDown') {
+        const currentTop = parseFloat(getComputedStyle(overlay).getPropertyValue('--h-focus-top')) || 35;
+        const newTop = Math.min(100 - 10, currentTop + focusStep); // Assuming focus band size is 10%
+        overlay.style.setProperty('--h-focus-top', `${newTop}%`);
+        overlay.style.setProperty('--h-focus-bottom', `${newTop + 10}%`);
+        moved = true;
+      }
+    } else if (uploader.classList.contains("focused-vertical")) {
+      if (event.key === 'ArrowLeft') {
+        const currentLeft = parseFloat(getComputedStyle(overlay).getPropertyValue('--v-focus-left')) || 35;
+        const newLeft = Math.max(0, currentLeft - focusStep);
+        overlay.style.setProperty('--v-focus-left', `${newLeft}%`);
+        overlay.style.setProperty('--v-focus-right', `${newLeft + 10}%`); // Assuming focus band size is 10%
+        moved = true;
+      } else if (event.key === 'ArrowRight') {
+        const currentLeft = parseFloat(getComputedStyle(overlay).getPropertyValue('--v-focus-left')) || 35;
+        const newLeft = Math.min(100 - 10, currentLeft + focusStep); // Assuming focus band size is 10%
+        overlay.style.setProperty('--v-focus-left', `${newLeft}%`);
+        overlay.style.setProperty('--v-focus-right', `${newLeft + 10}%`);
+        moved = true;
+      }
+    }
+    if (moved) {
+      event.preventDefault(); // Prevent default scrolling behavior
+      // updateOverlayCssVariables(); // This function is not defined in this context, but you can call it if needed
+    }
+  });
+
+
+
+
   
 
 }
