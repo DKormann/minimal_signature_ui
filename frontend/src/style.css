@@ -4,8 +4,8 @@ body{
 
   margin:0;
   padding:0;
+  text-align: center;
 }
-
 
 @media (prefers-color-scheme: light) {
   body {
@@ -14,3 +14,15 @@ body{
   }
 }
 
+
+#doc_picker{
+  margin: auto;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 2em;
+  background-color: rgba(0, 183, 255, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

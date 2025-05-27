@@ -2,21 +2,46 @@
 
 
 
-document.body.innerHTML = "<h1>minimal signature  some tsutttsdkjsdhfkdsjh</h1>"
+document.body.innerHTML = "<h1>minimal signature UI</h1>"
 
+async function load() {
 
-fetch("http://localhost:5000/api/list_documents").then((response) => {
-  if (response.ok) {
-    response.text().then((text) => {
-      document.body.innerHTML += `<p>${text}</p>`;
-    });
-  } else {
-    document.body.innerHTML += `<p>Error: ${response.status}</p>`;
-  }
-});
+  let doclist :string[] = []
+  await fetch("http://localhost:5000/api/list_documents").then(async (response) => {
+    
+    await response.json().then((data) => {
+      console.log(data);
 
+      doclist = data;
+    })
+  });
 
-// fetch("/api/available").then((response) => {
+  console.log(doclist);
+  
+
+  let doc_picker = document.createElement("select");
+  doc_picker.id = "doc_picker";
+
+  doclist.forEach((doc) => {
+    let option = document.createElement("option");
+    option.value = doc;
+    option.textContent = doc;
+    doc_picker.appendChild(option);
+
+  });
+
+  doc_picker.addEventListener("change", (event) => {
+    let selectedDoc = (event.target as HTMLSelectElement).value;
+    console.log("Selected document:", selectedDoc);
+  });
+
+  
+  
+  document.body.appendChild(doc_picker);
+
+}
+
+load()
 
 
 export {}
