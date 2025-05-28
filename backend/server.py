@@ -25,6 +25,13 @@ def get_document(name):
     return send_from_directory('./documents', name)
   except FileNotFoundError:
     return jsonify({'error': 'Document not found'}), 404
+
+
+# @app.route('/api/get_snippet/<int:dir>/<int:snippet_id>', methods=['GET'])
+# def get_snippet(dir, snippet_id):
+#   try:
+
+
   
 
 @app.route("/", methods = ["GET"])
