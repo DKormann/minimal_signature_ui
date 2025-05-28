@@ -11,9 +11,9 @@ let overlay : HTMLDivElement | null = null;
 
 let image_blob : Blob | null = null;
 
-const horizontalBandSize = 5
-const horizontalStepSize = 4.2;
-const horizontalFocusTop = 22.5;
+const horizontalBandSize = 5.5
+const horizontalStepSize = 4.25;
+const horizontalFocusTop = 21;
 
 const verticalBandSize = 15.2
 const verticalFocusLeft = 3;

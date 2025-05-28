@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <style>body{background-color: black};</style>
     <meta charset="UTF-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>minimal_signature_ui</title>
@@ -9,13 +8,33 @@
     <link rel="icon" href="/assets/favicon.e51331be.png" type="image/png"/>
     
 
-  <script type="module" crossorigin src="/assets/index.1c7ac779.js"></script>
-  <link rel="stylesheet" href="/assets/index.7f453825.css">
+
+  <script type="module" crossorigin src="/assets/index.b3022f82.js"></script>
+  <link rel="stylesheet" href="/assets/index.1ebbe23d.css">
 </head>
 <body>
 
+    <h1>Signature Checker</h1>
+
+    <div class="uploader" id="uploader">
+        <div>
+        <label for="fileInput">Choose File</label>
+        <select id="fileInput"></select>
+        </div>
+        <div class="focus-controls">
+        <button id="toggleHorizontalFocusButton" class="focus-toggle-btn">Toggle Horizontal Focus</button>
+        <button id="toggleVerticalFocusButton" class="focus-toggle-btn">Toggle Vertical Focus</button>
+        <button id="toggleBubblesButton" class="focus-toggle-btn">Toggle Bubbles</button>
+        </div>
+        <div id="previewContainer"></div>
+        <div id="bubblesContainer"></div>
+    </div>
+
+
 
     
+
+
 
 
 </body>
