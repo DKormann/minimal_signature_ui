@@ -47,13 +47,24 @@ input[type="file"] {
 
 .bubble {
   width: 25%;
+  font-size: 2em;
   height: 10vh;
   margin-top:1em;
   border-radius: 1em;
-  background: teal;
+  /* background: teal; */
   flex-shrink: 0;
   border:1px solid #ccc;
 
+}
+
+.bubble > .errorhover{
+  color:red;
+  display: none;
+  background-color: #e5393955;
+}
+
+.bubble:hover > .errorhover{
+  display: block;
 }
 
 /* mouse hoovering effect */

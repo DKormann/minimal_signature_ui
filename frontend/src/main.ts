@@ -125,18 +125,29 @@ async function load() {
       const bubble = document.createElement("div");
       bubble.className = "bubble";
       bubblesContainer.appendChild(bubble);
-
-      bubble.style.backgroundImage = `url(${imageurl})`;
-      bubble.style.backgroundSize = "900%";
-      bubble.style.backgroundPosition = `${22 + i*(16.3)}% ${currentFocusTop}%`;
-
       bubble.innerHTML = `<span>${i + 1}</span>`;
+
+      let errorhover = document.createElement("div");
+      errorhover.className = "errorhover";
+      errorhover.innerHTML = `<span>Report Fake</span>`;
+      bubble.appendChild(errorhover);
       return bubble;
     }
 
     let namebubble = mkBubble(0);
-    namebubble.innerHTML = ""
 
+    const names = [
+      "Al Shammas, Marvan",
+      "Delahaye, Nicolas",
+      "Gonzalez, David",
+      "Hernandez, Maria",
+      "Johnson, Emily"
+
+    ]
+
+    
+    
+    namebubble.innerHTML = names[bubbleindex - 1];
     namebubble.style.backgroundPosition = `${8}% ${20}%`;
     namebubble.style.marginRight = "50%";
 
@@ -152,8 +163,18 @@ async function load() {
       bub.style.backgroundImage = `url(${imgpath})`;
       bub.style.backgroundSize = "80%";
       bub.style.backgroundPosition = "center";
-
     }
+
+    let nextbutton = document.createElement("button");
+    nextbutton.textContent = "Next >>> ";
+    nextbutton.className = "bubble";
+
+    nextbutton.addEventListener("click", () => {
+      bubbleindex = Math.min(5, bubbleindex + 1);
+      showBubbles();
+    });
+
+    bubblesContainer.appendChild(nextbutton);
 
     
   }
