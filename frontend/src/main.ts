@@ -1,11 +1,15 @@
 const previewContainer = document.getElementById("previewContainer") as HTMLDivElement;
+const bubblesContainer = document.getElementById("bubblesContainer") as HTMLDivElement;
 
 const toggleHorizontalFocusButton = document.getElementById("toggleHorizontalFocusButton") as HTMLButtonElement;
 const toggleVerticalFocusButton = document.getElementById("toggleVerticalFocusButton") as HTMLButtonElement;
 const toggleBubblesButton = document.getElementById("toggleBubblesButton") as HTMLButtonElement;
 
+
 let overlay : HTMLDivElement | null = null;
 
+
+let image_blob : Blob | null = null;
 
 const horizontalBandSize = 5
 const horizontalStepSize = 4.2;
@@ -13,6 +17,9 @@ const horizontalFocusTop = 22.5;
 
 const verticalBandSize = 15.2
 const verticalFocusLeft = 3;
+
+let currentFocusTop = horizontalFocusTop;
+let currentFocusLeft = verticalFocusLeft;
 
 let focusMode : 'horizontal' | 'vertical' | 'bubbles' | 'none' = 'none'; 
 
@@ -39,23 +46,23 @@ async function load() {
   });
 
   const resetOverlay = (el:HTMLImageElement)=>{
+
+    currentFocusLeft = verticalFocusLeft;
+    currentFocusTop = horizontalFocusTop;
+
+    bubblesContainer.style.display = "none";
+    previewContainer.style.display = "block";
     const wrapper = document.createElement("div");
     wrapper.style.position = "relative";
     wrapper.appendChild(el);
     overlay = document.createElement("div");
     overlay.className = "focus-overlay";
 
-    overlay.style.setProperty('--h-focus-top', `${horizontalFocusTop}%`);
-    overlay.style.setProperty('--h-focus-bottom', `${horizontalFocusTop + horizontalBandSize}%`);
-    overlay.style.setProperty('--v-focus-left', `${verticalFocusLeft}%`);
-    overlay.style.setProperty('--v-focus-right', `${verticalFocusLeft + verticalBandSize}%`); // Assuming focus band size is 10%
-
     wrapper.appendChild(overlay);
     previewContainer.appendChild(wrapper);
 
     const uploader = document.getElementById("uploader") as HTMLDivElement;
     uploader.classList.remove("focused-horizontal", "focused-vertical");
-    focusMode = 'none';
 
   }
 
@@ -71,6 +78,7 @@ async function load() {
         }
       })
       .then(blob => {
+        image_blob = blob;
         const url = URL.createObjectURL(blob);
         previewContainer.innerHTML = ""; // Clear previous content
         let el;
@@ -90,17 +98,47 @@ async function load() {
 
         focusMode = 'none';
         resetOverlay(el as HTMLImageElement);
-        
 
+        toggleFocusMode('horizontal'); // Set default focus mode to horizontal
         })
-
   });
 
 
+
+  function showBubbles(){
+
+    const imageurl = URL.createObjectURL(image_blob as Blob);
+
+    let mkBubble = (i: number) => {
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubblesContainer.appendChild(bubble);
+
+      bubble.style.backgroundImage = `url(${imageurl})`;
+      bubble.style.backgroundSize = "900%";
+      bubble.style.backgroundPosition = `${22 + i*(16.3)}% ${currentFocusTop}%`;
+
+      bubble.innerHTML = `<span>${i + 1}</span>`;
+      return bubble;
+    }
+
+    let namebubble = mkBubble(0);
+
+    namebubble.style.backgroundPosition = `${8}% ${20}%`;
+    namebubble.style.marginRight = "50%";
+
+    bubblesContainer.appendChild(namebubble);
+
+
+    for (let i = 0; i < 5; i++) {
+      bubblesContainer.appendChild(mkBubble(i));
+    }
+
+    
+  }
+
   function toggleFocusMode(mode: 'horizontal' | 'vertical' | 'bubbles') {
-    previewContainer.style.display = "block";
-    uploader.classList.remove("focused-horizontal");
-    uploader.classList.remove("focused-vertical");
+    resetOverlay(document.querySelector(".preview") as HTMLImageElement);
 
     if (focusMode === mode){
       focusMode = 'none';
@@ -109,62 +147,69 @@ async function load() {
 
     focusMode = mode;
     switch (mode){
-
       case 'horizontal':
         uploader.classList.add("focused-horizontal");
+        showHorizontalFocus();
         break;
 
       case 'vertical':
         uploader.classList.add("focused-vertical");
+        showVerticalFocus();
         break;
 
       case 'bubbles':
         previewContainer.style.display = "none";
+        bubblesContainer.style.display = "flex";
+        bubblesContainer.innerHTML = "";
+        showBubbles();
         uploader.classList.remove("focused-horizontal", "focused-vertical");
         break;
-
-
     }
   }
 
-  const uploader = document.getElementById("uploader") as HTMLDivElement;
+  function showHorizontalFocus() {
+    if (!overlay) return;
+    overlay.style.setProperty('--h-focus-top', `${currentFocusTop}%`);
+    overlay.style.setProperty('--h-focus-bottom', `${currentFocusTop + horizontalBandSize}%`);
+  }
 
+  function showVerticalFocus() {
+    if (!overlay) return;
+    overlay.style.setProperty('--v-focus-left', `${currentFocusLeft}%`);
+    overlay.style.setProperty('--v-focus-right', `${currentFocusLeft + verticalBandSize}%`);
+  }
+
+  const uploader = document.getElementById("uploader") as HTMLDivElement;
   toggleHorizontalFocusButton.addEventListener("click", () => toggleFocusMode('horizontal'));
   toggleVerticalFocusButton.addEventListener("click", () => toggleFocusMode('vertical'))
   toggleBubblesButton.addEventListener("click", () => toggleFocusMode('bubbles'));
 
   document.addEventListener('keydown', (event) => {
     
-    if (!overlay) return;
+
     let moved = false;
     
     if (focusMode === 'horizontal') {
+      console.log(event.key);
+      
       if (event.key === 'ArrowUp') {
-        const currentTop = parseFloat(getComputedStyle(overlay).getPropertyValue('--h-focus-top')) || 35;
-        const newTop = Math.max(0, currentTop - horizontalStepSize);
-        overlay.style.setProperty('--h-focus-top', `${newTop}%`);
-        overlay.style.setProperty('--h-focus-bottom', `${newTop + horizontalBandSize}%`);
+        currentFocusTop = currentFocusTop - horizontalStepSize;
+        showHorizontalFocus();
         moved = true;
       } else if (event.key === 'ArrowDown') {
-        const currentTop = parseFloat(getComputedStyle(overlay).getPropertyValue('--h-focus-top')) || 35;
-        const newTop = Math.min(100 - 10, currentTop + horizontalStepSize);
-        overlay.style.setProperty('--h-focus-top', `${newTop}%`);
-        overlay.style.setProperty('--h-focus-bottom', `${newTop + horizontalBandSize}%`);
+        currentFocusTop = currentFocusTop + horizontalStepSize;
+        showHorizontalFocus();
         moved = true;
       }
     } else if (focusMode === 'vertical') {
 
       if (event.key === 'ArrowLeft') {
-        const currentLeft = parseFloat(getComputedStyle(overlay).getPropertyValue('--v-focus-left')) || 35;
-        const newLeft = Math.max(0, currentLeft - verticalBandSize);
-        overlay.style.setProperty('--v-focus-left', `${newLeft}%`);
-        overlay.style.setProperty('--v-focus-right', `${newLeft + verticalBandSize}%`); // Assuming focus band size is 10%
+        currentFocusLeft = currentFocusLeft - verticalBandSize;
+        showVerticalFocus();
         moved = true;
       } else if (event.key === 'ArrowRight') {
-        const currentLeft = parseFloat(getComputedStyle(overlay).getPropertyValue('--v-focus-left')) || 35;
-        const newLeft = Math.min(100 - 10, currentLeft + verticalBandSize); // Assuming focus band size is 10%
-        overlay.style.setProperty('--v-focus-left', `${newLeft}%`);
-        overlay.style.setProperty('--v-focus-right', `${newLeft + verticalBandSize}%`);
+        currentFocusLeft = currentFocusLeft + verticalBandSize;
+        showVerticalFocus();
         moved = true;
       }
     }
@@ -177,12 +222,13 @@ async function load() {
     doc_picker.dispatchEvent(new Event("change")); // Trigger change event to load the first document
   }else{
     console.log("Document picker not found");
-    
   }
 
 }
 
 load()
+
+
 
 
 export {}
