@@ -98,35 +98,40 @@ async function load() {
 
 
   function toggleFocusMode(mode: 'horizontal' | 'vertical' | 'bubbles') {
-    if (focusMode === mode) {
+    previewContainer.style.display = "block";
+    uploader.classList.remove("focused-horizontal");
+    uploader.classList.remove("focused-vertical");
+
+    if (focusMode === mode){
       focusMode = 'none';
-    }else{
-      focusMode = mode;
-      // if (mode == ''
+      return
+    }
+
+    focusMode = mode;
+    switch (mode){
+
+      case 'horizontal':
+        uploader.classList.add("focused-horizontal");
+        break;
+
+      case 'vertical':
+        uploader.classList.add("focused-vertical");
+        break;
+
+      case 'bubbles':
+        previewContainer.style.display = "none";
+        uploader.classList.remove("focused-horizontal", "focused-vertical");
+        break;
+
+
     }
   }
 
-  
-
   const uploader = document.getElementById("uploader") as HTMLDivElement;
 
-  toggleHorizontalFocusButton.addEventListener("click", () => {
-    previewContainer.style.display = "block";
-    uploader.classList.toggle("focused-horizontal");
-    uploader.classList.remove("focused-vertical");
-    toggleFocusMode('horizontal');
-  });
-
-  toggleVerticalFocusButton.addEventListener("click", () => {
-    previewContainer.style.display = "block";
-    uploader.classList.toggle("focused-vertical");
-    uploader.classList.remove("focused-horizontal");
-    toggleFocusMode('vertical');
-  });
-
-  toggleBubblesButton.addEventListener("click", () => {
-    toggleFocusMode('bubbles');
-  });
+  toggleHorizontalFocusButton.addEventListener("click", () => toggleFocusMode('horizontal'));
+  toggleVerticalFocusButton.addEventListener("click", () => toggleFocusMode('vertical'))
+  toggleBubblesButton.addEventListener("click", () => toggleFocusMode('bubbles'));
 
   document.addEventListener('keydown', (event) => {
     
@@ -164,7 +169,7 @@ async function load() {
       }
     }
     if (moved) {
-      event.preventDefault(); // Prevent default scrolling behavior
+      event.preventDefault();
     }
   });
 
