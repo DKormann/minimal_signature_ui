@@ -107,7 +107,7 @@ async function load() {
         focusMode = 'none';
         resetOverlay(el as HTMLImageElement);
 
-        toggleFocusMode('bubbles');
+        // toggleFocusMode('bubbles');
         })
   });
 
@@ -142,16 +142,13 @@ async function load() {
       "Gonzalez, David",
       "Hernandez, Maria",
       "Johnson, Emily"
-
     ]
 
-    
-    
+
     namebubble.innerHTML = names[bubbleindex - 1];
+
     namebubble.style.backgroundPosition = `${8}% ${20}%`;
     namebubble.style.marginRight = "50%";
-
-    bubblesContainer.appendChild(namebubble);
 
 
     for (let i = 0; i < 5; i++) {
@@ -227,7 +224,6 @@ async function load() {
   toggleBubblesButton.addEventListener("click", () => toggleFocusMode('bubbles'));
 
   document.addEventListener('keydown', (event) => {
-    
 
     let moved = false;
     
@@ -268,15 +264,28 @@ async function load() {
       }
     }
 
-
     if (moved) {
       event.preventDefault();
     }
   });
 
-  doc_picker.value = "doc2.png"
-  doc_picker.dispatchEvent(new Event("change")); // Trigger change event to load the default document
-  toggleFocusMode('bubbles'); // Set initial focus mode to bubbles
+  document.addEventListener('click', (event) => {
+    if (focusMode === 'horizontal'){
+      // currentFocusTop = 0;
+      // showHorizontalFocus();
+      if (!overlay) return;
+      let yy = event.clientY - previewContainer.getBoundingClientRect().top - 25;
+      currentFocusTop = (yy / previewContainer.clientHeight) * 100;
+      showHorizontalFocus();
+
+
+    }
+  });
+
+
+  // doc_picker.value = "doc2.png"
+  // doc_picker.dispatchEvent(new Event("change")); // Trigger change event to load the default document
+  // toggleFocusMode('bubbles'); // Set initial focus mode to bubbles
 
 }
 

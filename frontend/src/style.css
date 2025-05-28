@@ -51,12 +51,16 @@ input[type="file"] {
   height: 10vh;
   margin-top:1em;
   border-radius: 1em;
-  /* background: teal; */
   flex-shrink: 0;
   border:1px solid #ccc;
+  cursor: pointer;
 
 }
 
+.bubble:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
 .bubble > .errorhover{
   color:red;
   display: none;
@@ -65,12 +69,6 @@ input[type="file"] {
 
 .bubble:hover > .errorhover{
   display: block;
-}
-
-/* mouse hoovering effect */
-.bubble:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 
