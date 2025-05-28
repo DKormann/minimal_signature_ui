@@ -17,7 +17,7 @@ def message():
 
 @app.route('/api/list_documents', methods=['GET'])
 def list_documents():
-  return jsonify(os.listdir('./documents'))
+  return jsonify(os.listdir('./documents')[1:])
 
 @app.route('/api/get_document/<string:name>', methods=['GET'])
 def get_document(name):

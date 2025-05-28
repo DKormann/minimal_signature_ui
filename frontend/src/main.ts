@@ -34,13 +34,17 @@ async function load() {
 
   let doc_picker = document.querySelector("#fileInput") as HTMLSelectElement
 
-  doclist.forEach((doc) => {
+  ((doclist)).forEach((doc) => {
     let option = document.createElement("option");
     option.value = doc;
     option.textContent = doc;
     doc_picker.appendChild(option);
 
   });
+
+  doc_picker.value = "documents"; // Set default value to "documents"
+
+
 
   doc_picker.addEventListener("change", (event) => {
     let selectedDoc = (event.target as HTMLSelectElement).value;
@@ -101,7 +105,7 @@ async function load() {
         focusMode = 'none';
         resetOverlay(el as HTMLImageElement);
 
-        toggleFocusMode('horizontal'); // Set default focus mode to horizontal
+        // toggleFocusMode('horizontal'); // Set default focus mode to horizontal
         })
   });
 
@@ -136,8 +140,12 @@ async function load() {
       let bub = mkBubble(i)
       bubblesContainer.appendChild(bub);
 
-      // snippath = `http://localhost:5000/api/get_snippet/1/${i}`
-      // fetch(`http://localhost:5000/api/get_snippet/1/${i}`).then(response=>{ })
+      let imgpath = `http://localhost:5000/api/get_snippet/1/${i}`
+
+      bub.style.backgroundImage = `url(${imgpath})`;
+      bub.style.backgroundSize = "80%";
+      bub.style.backgroundPosition = "center";
+
     }
 
     
@@ -224,11 +232,11 @@ async function load() {
     }
   });
 
-  if (doc_picker) {
-    doc_picker.dispatchEvent(new Event("change")); // Trigger change event to load the first document
-  }else{
-    console.log("Document picker not found");
-  }
+  // if (doc_picker) {
+  //   doc_picker.dispatchEvent(new Event("change")); // Trigger change event to load the first document
+  // }else{
+  //   console.log("Document picker not found");
+  // }
 
 }
 
