@@ -51,8 +51,8 @@ async function load() {
     console.log("Selected document:", selectedDoc);
   });
 
-  const resetOverlay = (el:HTMLImageElement)=>{
-
+  const resetOverlay = (el:HTMLImageElement|undefined)=>{
+    bubbleindex = 1;
     currentFocusLeft = verticalFocusLeft;
     currentFocusTop = horizontalFocusTop;
 
@@ -60,7 +60,9 @@ async function load() {
     previewContainer.style.display = "block";
     const wrapper = document.createElement("div");
     wrapper.style.position = "relative";
-    wrapper.appendChild(el);
+    if (el) {
+      wrapper.appendChild(el);
+    }
     overlay = document.createElement("div");
     overlay.className = "focus-overlay";
 
@@ -105,14 +107,18 @@ async function load() {
         focusMode = 'none';
         resetOverlay(el as HTMLImageElement);
 
-        // toggleFocusMode('horizontal'); // Set default focus mode to horizontal
+        toggleFocusMode('bubbles');
         })
   });
 
-
+  let bubbleindex = 1;
 
   function showBubbles(){
 
+    bubblesContainer.innerHTML = "";
+
+
+    if (!image_blob) return
     const imageurl = URL.createObjectURL(image_blob as Blob);
 
     let mkBubble = (i: number) => {
@@ -129,6 +135,7 @@ async function load() {
     }
 
     let namebubble = mkBubble(0);
+    namebubble.innerHTML = ""
 
     namebubble.style.backgroundPosition = `${8}% ${20}%`;
     namebubble.style.marginRight = "50%";
@@ -139,9 +146,9 @@ async function load() {
     for (let i = 0; i < 5; i++) {
       let bub = mkBubble(i)
       bubblesContainer.appendChild(bub);
-
-      let imgpath = `http://localhost:5000/api/get_snippet/1/${i}`
-
+      let imgpath = `http://localhost:5000/api/get_snippet/${bubbleindex}/${i}`
+      console.log(imgpath);
+      
       bub.style.backgroundImage = `url(${imgpath})`;
       bub.style.backgroundSize = "80%";
       bub.style.backgroundPosition = "center";
@@ -226,17 +233,29 @@ async function load() {
         showVerticalFocus();
         moved = true;
       }
+    } else if (focusMode === 'bubbles') {
+      if (event.key === 'ArrowLeft') {
+        bubbleindex = Math.max(1, bubbleindex - 1);
+        showBubbles();
+        moved = true;
+      } else if (event.key === 'ArrowRight') {
+        bubbleindex = Math.min(5, bubbleindex + 1);
+        console.log(bubbleindex);
+        
+        showBubbles();
+        moved = true;
+      }
     }
+
+
     if (moved) {
       event.preventDefault();
     }
   });
 
-  // if (doc_picker) {
-  //   doc_picker.dispatchEvent(new Event("change")); // Trigger change event to load the first document
-  // }else{
-  //   console.log("Document picker not found");
-  // }
+  doc_picker.value = "doc2.png"
+  doc_picker.dispatchEvent(new Event("change")); // Trigger change event to load the default document
+  toggleFocusMode('bubbles'); // Set initial focus mode to bubbles
 
 }
 
