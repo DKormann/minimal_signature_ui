@@ -27,11 +27,12 @@ def get_document(name):
     return jsonify({'error': 'Document not found'}), 404
 
 
-# @app.route('/api/get_snippet/<int:dir>/<int:snippet_id>', methods=['GET'])
-# def get_snippet(dir, snippet_id):
-#   try:
-
-
+@app.route('/api/get_snippet/<int:dir>/<int:snippet_id>', methods=['GET'])
+def get_snippet(dir, snippet_id):
+  try:
+    return send_from_directory( f'./documents/snippets/{dir}/genuine/', f'{snippet_id}.jpg' )
+  except FileNotFoundError:
+    return jsonify({'error': 'Snippet not found'}), 404
   
 
 @app.route("/", methods = ["GET"])

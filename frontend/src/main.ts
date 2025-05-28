@@ -17,6 +17,8 @@ const horizontalFocusTop = 21;
 
 const verticalBandSize = 15.2
 const verticalFocusLeft = 3;
+const verticalStepSize = 15.3;;
+
 
 let currentFocusTop = horizontalFocusTop;
 let currentFocusLeft = verticalFocusLeft;
@@ -131,7 +133,11 @@ async function load() {
 
 
     for (let i = 0; i < 5; i++) {
-      bubblesContainer.appendChild(mkBubble(i));
+      let bub = mkBubble(i)
+      bubblesContainer.appendChild(bub);
+
+      // snippath = `http://localhost:5000/api/get_snippet/1/${i}`
+      // fetch(`http://localhost:5000/api/get_snippet/1/${i}`).then(response=>{ })
     }
 
     
@@ -204,11 +210,11 @@ async function load() {
     } else if (focusMode === 'vertical') {
 
       if (event.key === 'ArrowLeft') {
-        currentFocusLeft = currentFocusLeft - verticalBandSize;
+        currentFocusLeft = currentFocusLeft - verticalStepSize;
         showVerticalFocus();
         moved = true;
       } else if (event.key === 'ArrowRight') {
-        currentFocusLeft = currentFocusLeft + verticalBandSize;
+        currentFocusLeft = currentFocusLeft + verticalStepSize;
         showVerticalFocus();
         moved = true;
       }
