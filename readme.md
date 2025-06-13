@@ -20,22 +20,40 @@ to start server
 ### TODOS
 
 ## UI
-  [x] uplaoding documents
-  [x] viewing signatures
+
+ - [x] uplaoding documents
+  
+ - [x] viewing signatures
+ 
+ - [ ] user interaction
+ 
+ - [ ] saving results
 
 ## Machine learning
 
-  [ ] where are the signatures on the paper (template aligning)?
-    [x] model
-    [ ] dataset
-    [ ] training
-  [ ] get the signature (background removal)
-    [x] model
-    [ ] dataset
-    [ ] training
-  [x] signatures match ?
-    [x] model
-    [x] dataset
-    [x] training
+ - [ ] where are the signatures on the paper (template aligning)?
+  
+   - [x] model
+    
+   - [ ] dataset
+    
+   - [ ] training
+    
+ - [ ] get the signature (background removal)
+  
+   - [x] model
+    
+   - [ ] dataset
+    
+   - [ ] training
+    
+ - [x] signatures match ?
+  
+   - [x] model
+    
+   - [x] dataset
+    
+   - [x] training
+    
   
 
