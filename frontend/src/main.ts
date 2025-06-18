@@ -133,7 +133,7 @@ async function load() {
       bubble.appendChild(errorhover);
       // user interaction on report button
       errorhover.addEventListener('click', (e) => {
-        e.stopPropagation(); // evita bubbling
+        e.stopPropagation(); 
         errorhover.innerHTML = `<span>Reported!</span>`;
         errorhover.style.background = "#ffdddd";
         errorhover.style.color = "#a00";
@@ -172,16 +172,27 @@ async function load() {
       bub.style.backgroundPosition = "center";
     }
 
+    //next and back buttons
     let nextbutton = document.createElement("button");
     nextbutton.textContent = "Next >>> ";
     nextbutton.className = "bubble";
 
     nextbutton.addEventListener("click", () => {
-      bubbleindex = Math.min(5, bubbleindex + 1);
+      bubbleindex = Math.min(5, bubbleindex + 1);  //max bubbleindex is 5
       showBubbles();
     });
 
     bubblesContainer.appendChild(nextbutton);
+    // to do, set the backbutton before the names
+    let backbutton = document.createElement("button");
+    backbutton.textContent = "Back <<<";
+    backbutton.className = "bubble";
+    backbutton.disabled = bubbleindex <= 1; // disable back button on first page
+    backbutton.addEventListener("click", () => { 
+      bubbleindex = Math.max(1, bubbleindex - 1);   //min bubbleindex is 1
+      showBubbles();
+    });
+    bubblesContainer.appendChild(backbutton);
 
     
   }
