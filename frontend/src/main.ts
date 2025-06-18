@@ -131,6 +131,16 @@ async function load() {
       errorhover.className = "errorhover";
       errorhover.innerHTML = `<span>Report Fake</span>`;
       bubble.appendChild(errorhover);
+      // user interaction on report button
+      errorhover.addEventListener('click', (e) => {
+        e.stopPropagation(); // evita bubbling
+        errorhover.innerHTML = `<span>Reported!</span>`;
+        errorhover.style.background = "#ffdddd";
+        errorhover.style.color = "#a00";
+        errorhover.style.pointerEvents = "none";
+        // higlight bubble corner in red
+        bubble.style.outline = "2px solid #a00";
+      });
       return bubble;
     }
 
