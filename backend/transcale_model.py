@@ -16,23 +16,103 @@ import matplotlib.pyplot as plt
 
 template = Image.open(Path("./resources/Anwesenheitsliste_lt.png"))
 [X,Y] = template.size
-template.show()
+display(template)
 
 #%%
 
 
 
-template = template.resize((X//2, Y//2), Image.Resampling.LANCZOS)
+# template = template.resize((X//2, Y//2), Image.Resampling.LANCZOS)
+# template_arr = np.array(template)[:,:,:3]
+
+# plt.imshow(template_arr[:100,-200:], cmap='gray')
+# template_arr.shape
 
 
-template_arr = np.array(template)[:,:,:3]
 
 
-plt.imshow(template_arr[:100,-200:], cmap='gray')
 
-template_arr.shape
+#%%
 
 
+class transformation:
+
+  def __init__(self, mat): self.mat = mat
+  
+  @staticmethod
+  def new (scale, rotation, translation = (0, 0)):
+    sin = np.sin(rotation)
+    cos = np.cos(rotation)
+    rot_mat = np.array([
+      [cos, -sin, 0],
+      [sin, cos, 0],
+    ])
+    mat = rot_mat * scale
+    mat[:, 2] = translation
+    return transformation(mat)
+  
+
+  def inverse(self):
+    inv = np.linalg.inv(np.concat((self.mat, np.array([[0, 0, 1]])), axis=0))
+    return transformation(inv[:2, :])
+
+  def apply_image(self, image):
+    return Image.alpha_composite(
+      Image.new("RGBA", image.size, "white"),
+      image.transform(
+        image.size,
+        PIL.ImageTransform.AffineTransform(self.mat.flatten()[:6]),
+        resample=PIL.Image.Resampling.BICUBIC
+      )
+    )
+
+
+tran = transformation.new(1.5, -0.1, (-100, 0))
+img = tran.apply_image(template)
+display(img)
+display(tran.inverse().apply_image(img))
+
+
+#%%
+
+
+
+
+
+#%%
+
+mat = transformation.new(1, -0.1, (-100,0)).mat
+
+mat = np.concat((mat, np.array([[0, 0, 1]])), axis=0)
+
+# np.linalg.inv(mat)[:2,:]
+
+
+#%%
+
+
+transformed =  template.transform(template.size, PIL.ImageTransform.AffineTransform((
+  1.5, 0.5, -100,
+  -.5, 1.5, 50
+  )) )
+transformed = Image.alpha_composite(Image.new("RGBA", transformed.size, "white"), transformed.convert("RGBA"))
+display(transformed)
+
+
+#%%
+
+
+def create_XY(k = 100):
+  """k is the size of the training snippets"""
+
+  t_k = min(template_arr.size)
+  
+  max_scale = max(0.6, t_k / k)
+  scale = 
+  
+  resized = template.resize(())
+
+create_XY()
 
 #%%
 
