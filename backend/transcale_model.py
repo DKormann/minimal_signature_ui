@@ -10,30 +10,20 @@ from pathlib import Path
 import PIL
 from PIL import Image
 from IPython.display import display
-import cv2
+# import cv2
 import matplotlib.pyplot as plt
 # %%
 
-template = Image.open(Path("./resources/Anwesenheitsliste_lt.png"))
+template = Image.open(Path("../template.png"))
 [X,Y] = template.size
 display(template)
 
-#%%
-
-
-
-# template = template.resize((X//2, Y//2), Image.Resampling.LANCZOS)
-# template_arr = np.array(template)[:,:,:3]
-
-# plt.imshow(template_arr[:100,-200:], cmap='gray')
-# template_arr.shape
-
-
-
-
 
 #%%
 
+np.concat
+
+#%%
 
 class transformation:
 
@@ -53,7 +43,7 @@ class transformation:
   
 
   def inverse(self):
-    inv = np.linalg.inv(np.concat((self.mat, np.array([[0, 0, 1]])), axis=0))
+    inv = np.linalg.inv(np.concatenate((self.mat, np.array([[0, 0, 1]])), axis=0))
     return transformation(inv[:2, :])
 
   def apply_image(self, image):
@@ -75,18 +65,8 @@ display(tran.inverse().apply_image(img))
 
 #%%
 
-
-
-
-
-#%%
-
 mat = transformation.new(1, -0.1, (-100,0)).mat
-
-mat = np.concat((mat, np.array([[0, 0, 1]])), axis=0)
-
-# np.linalg.inv(mat)[:2,:]
-
+mat = np.concatenate((mat, np.array([[0, 0, 1]])), axis=0)
 
 #%%
 
@@ -94,6 +74,7 @@ mat = np.concat((mat, np.array([[0, 0, 1]])), axis=0)
 transformed =  template.transform(template.size, PIL.ImageTransform.AffineTransform((
   1.5, 0.5, -100,
   -.5, 1.5, 50
+  
   )) )
 transformed = Image.alpha_composite(Image.new("RGBA", transformed.size, "white"), transformed.convert("RGBA"))
 display(transformed)
